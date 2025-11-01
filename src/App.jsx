@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { saveNotes } from "./utils/localStorage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import NoteForm from "./components/NoteForm";
 import NoteList from "./components/NoteList";
 import TagFilter from "./components/TagFilter";
@@ -18,6 +20,7 @@ function App() {
       <NoteForm />
       <TagFilter />
       <NoteList />
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 }

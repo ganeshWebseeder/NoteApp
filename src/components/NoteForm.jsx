@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addNote, editNote, deleteNote } from "../redux/notesSlice";
 import { v4 as uuidv4 } from "uuid";
 import ReactMarkdown from "react-markdown";
+import { toast } from "react-toastify";
+
 
 export default function NoteForm() {
   const dispatch = useDispatch();
@@ -17,12 +19,18 @@ export default function NoteForm() {
   const handleAddOrEdit = () => {
     if (!title.trim()) return alert("Title cannot be empty");
 
+    
+
     const noteData = {
       id: editingId || uuidv4(),
       title,
       body,
-      tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
+      tags: tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
     };
+    toast.success("Note added successfully!");
 
     if (editingId) {
       dispatch(editNote({ id: editingId, updatedNote: noteData }));
@@ -42,12 +50,14 @@ export default function NoteForm() {
     setTags(note.tags.join(", "));
     setEditingId(note.id);
     window.scrollTo({ top: 0, behavior: "smooth" });
+    toast.success("Note updated successfully!");
   };
 
   const handleDelete = (id) => {
     if (window.confirm("Delete this note?")) {
       dispatch(deleteNote(id));
     }
+    toast.info("Note deleted successfully!");
   };
 
   return (
@@ -74,7 +84,6 @@ export default function NoteForm() {
             onClick={() => setPreview(!preview)}
             className="text-sm text-blue-600 underline hover:text-blue-800 transition-all"
           >
-        
             {preview ? "Switch to Edit Mode" : "Preview Markdown"}
           </button>
         </div>
@@ -83,9 +92,7 @@ export default function NoteForm() {
           <div className="border p-5 rounded-xl bg-gray-50 prose max-h-80 overflow-y-auto mb-6">
             <ReactMarkdown>{body || "*Nothing to preview...*"}</ReactMarkdown>
           </div>
-          
         ) : (
-        
           <textarea
             placeholder="Write your detailed note here... (Markdown supported ✨)"
             className="border border-gray-300 w-full p-4 rounded-xl mb-6 h-48 text-md focus:ring-2 focus:ring-blue-400 focus:outline-none resize-none shadow-sm"
@@ -94,17 +101,19 @@ export default function NoteForm() {
           />
         )}
 
-        {/* Tags Input */}
-        <input
-          type="text"
-          placeholder="Tags (comma separated, e.g. work, personal, urgent)"
+        {/* Tag Select (Single) */}
+        <select
           className="border border-gray-300 w-full p-4 rounded-xl mb-8 text-md focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm"
           value={tags}
           onChange={(e) => setTags(e.target.value)}
-        />
-
-        <br />
-        <br />
+        >
+          <option value="">Select a Tag</option>
+          <option value="work">Work</option>
+          <option value="personal">Personal</option>
+          <option value="urgent">Urgent</option>
+          <option value="study">Study</option>
+          <option value="idea">Idea</option>
+        </select>
 
         {/* Buttons */}
         <div className="flex flex-wrap justify-center gap-6 mb-8">
